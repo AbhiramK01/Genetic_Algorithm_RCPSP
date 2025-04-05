@@ -350,7 +350,7 @@ The optimized schedule shows efficient resource usage and task parallelization w
 
 *View `gantt_optimized.pdf` for a color-coded Gantt chart of the optimized schedule.*
 
-![Optimized Schedule Gantt Chart](docs/images/gnatt_optimized.png)
+![Optimized Schedule Gantt Chart](docs/images/gantt_optimized.jpg)
 *Sample optimized schedule Gantt chart showing efficient resource allocation and task parallelization*
 
 ### Non-Optimized Schedule
@@ -358,7 +358,7 @@ The non-optimized schedule shows less efficient resource allocation and longer p
 
 *View `gantt_non_optimized.pdf` for comparison.*
 
-![Non-Optimized Schedule Gantt Chart](docs/images/gantt_non_optimized.png)
+![Non-Optimized Schedule Gantt Chart](docs/images/gantt_non_optimized.jpg)
 *Sample non-optimized schedule showing longer project duration and less efficient resource usage*
 
 ### Performance Comparison
@@ -366,7 +366,7 @@ The comparison chart provides a clear visualization of the improvements achieved
 
 *View `comparison_chart.pdf` for a bar chart comparing key metrics.*
 
-![Performance Comparison Chart](docs/images/comparison_chart.png)
+![Performance Comparison Chart](docs/images/comparison_chart.jpg)
 *Bar chart comparing key performance metrics between optimized and non-optimized schedules*
 
 ## Real-World Applications
