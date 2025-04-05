@@ -1,6 +1,6 @@
 # Genetic Algorithm for Resource-Constrained Project Scheduling Problem (SRCPSP)
 
-This project implements a genetic algorithm approach to solve the Resource-Constrained Project Scheduling Problem (RCPSP), which is a well-known NP-hard optimization problem in operations research and project management.
+This project implements a genetic algorithm approach to solve the Resource-Constrained Project Scheduling Problem (SRCPSP), which is a well-known NP-hard optimization problem in operations research and project management.
 
 *Note: The optimized schedule can be viewed in the generated gantt_optimized.pdf file after running the visualization script.*
 
@@ -123,161 +123,27 @@ The project works with the following data entities:
 - **Dependencies**: Predecessor-successor relationships between tasks
 - **Schedule**: A solution representing start/end times for all tasks
 
-## Comprehensive Run Instructions
-
-### Prerequisites
-
-- Python 3.7 or higher
-- Required packages (install via `pip install -r requirements.txt`):
-  - matplotlib
-  - numpy
-  - networkx (for graph operations)
-
-### Initial Setup
-
-1. **Clone or download the repository**:
-   ```
-   git clone https://github.com/yourusername/Genetic-SRCPSP.git
-   cd Genetic-SRCPSP
-   ```
-
-2. **Install dependencies**:
-   ```
-   pip install -r requirements.txt
-   ```
-
-3. **Verify installation**:
-   Make sure the environment is correctly set up by listing the sample data:
-   ```
-   python -c "import os; print(os.listdir('sampleData'))"
-   ```
-   This should list the available sample datasets.
-
-### Running the Simulation
-
-#### Basic Simulation
-
-The simplest way to run the genetic algorithm is with default parameters:
-
-```
-python -m deepThought.simulator.simulator --scheduler genetic --output output.pickle
-```
-
-This command:
-- Uses the genetic algorithm scheduler
-- Runs with default parameters (50 generations, population size 20)
-- Saves results to `output.pickle` in the current directory
-- Uses the sample data included in the package
-
-#### Advanced Simulation Options
-
-For more control over the genetic algorithm:
-
-```
-python -m deepThought.simulator.simulator --scheduler genetic --iterations 100 --population 50 --mutation_rate 0.1 --crossover_rate 0.8 --output output.pickle
-```
-
-Key parameters:
-- `--scheduler`: Algorithm to use (options: `genetic`, `reference`, `PPPolicies`)
-- `--iterations`: Number of generations (default: 50)
-- `--population`: Population size (default: 20)
-- `--mutation_rate`: Probability of mutation (default: 0.05)
-- `--crossover_rate`: Probability of crossover (default: 0.9)
-- `--tournament_size`: Number of chromosomes in tournament selection (default: 3)
-- `--output`: File path to save simulation results (default: output.pickle)
-
-#### Using Different Datasets
-
-To use a custom dataset:
-
-```
-python -m deepThought.simulator.simulator --scheduler genetic --output output.pickle --input sampleData/test_data.pickle
-```
-
-The input file should be a pickle file containing the project model with tasks, resources, and dependencies.
-
-#### Comparing Different Schedulers
-
-To compare the genetic algorithm with other scheduling approaches:
-
-```
-python -m deepThought.simulator.simulator --scheduler reference --output reference_output.pickle
-python -m deepThought.simulator.simulator --scheduler PPPolicies --output pppolicies_output.pickle
-python -m deepThought.simulator.simulator --scheduler genetic --output genetic_output.pickle
-```
-
-### Generating Visualizations
-
-#### Basic Visualization
-
-After running the simulation, generate the visualization:
-
-```
-python run_visualizer.py
-```
-
-This will:
-1. Load the simulation results from `output.pickle`
-2. Generate three visualization files:
-   - `gantt_optimized.pdf`: Optimized schedule Gantt chart
-   - `gantt_non_optimized.pdf`: Non-optimized schedule for comparison
-   - `comparison_chart.pdf`: Performance metrics comparison
-
-#### Customized Visualization
-
-For more control over the visualization:
-
-```
-python run_visualizer.py --input custom_output.pickle --optimized_pdf my_optimized_chart.pdf --non_optimized_pdf my_non_optimized_chart.pdf --comparison_pdf my_comparison.pdf
-```
-
-Key parameters:
-- `--input`: Simulation result file (default: output.pickle)
-- `--optimized_pdf`: Filename for optimized schedule chart (default: gantt_optimized.pdf)
-- `--non_optimized_pdf`: Filename for non-optimized chart (default: gantt_non_optimized.pdf)
-- `--comparison_pdf`: Filename for comparison chart (default: comparison_chart.pdf)
-
-### Troubleshooting
-
-If you encounter any errors:
-
-1. **Import errors**: Make sure you're running from the project root directory
-   ```
-   cd Genetic-SRCPSP
-   ```
-
-2. **Missing dependencies**: Check that all requirements are installed
-   ```
-   pip install -r requirements.txt
-   ```
-
-3. **File not found errors**: Verify that the input files exist
-   ```
-   python -c "import os; print(os.path.exists('output.pickle'))"
-   ```
-
-4. **Visualization errors**: Check if matplotlib is working correctly
-   ```
-   python -c "import matplotlib.pyplot as plt; plt.figure(); plt.close()"
-   ```
-
-### Example Run Workflow
-
-Here's a complete workflow example:
+## Quick Start Guide
 
 ```bash
-# 1. Install dependencies
+# Clone the repository
+git clone https://github.com/AbhiramK01/Genetic_Algorithm_RCPSP.git
+cd Genetic_Algorithm_RCPSP
+
+# Create and activate virtual environment
+python -m venv venv
+.\venv\Scripts\Activate
+
+# Install dependencies
 pip install -r requirements.txt
 
-# 2. Run the genetic algorithm simulation
-python -m deepThought.simulator.simulator --scheduler genetic --iterations 100 --population 50 --output output.pickle
+# Run the genetic algorithm scheduler
+python -m deepThought.simulator.simulator --scheduler PPPolicies --output output.pickle sampleData/test_data.pickle
 
-# 3. Generate visualizations
+# Generate visualizations
 python run_visualizer.py
 
-# 4. View the results
-# Open the PDF files in your preferred viewer
-# On Windows:
+# View the results
 start gantt_optimized.pdf
 start gantt_non_optimized.pdf
 start comparison_chart.pdf
