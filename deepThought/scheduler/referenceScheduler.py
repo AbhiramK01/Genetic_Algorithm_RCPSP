@@ -8,7 +8,7 @@ class ReferenceScheduler(Scheduler):
     def _reschedule(self):
         list_of_new_tasks = []
 
-        for task in self.tasks_to_do.values():
+        for task in list(self.tasks_to_do.values()):
             task_or_none = self.allocate_resources(task)
 
             if task_or_none is not None:

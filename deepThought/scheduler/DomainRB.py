@@ -52,7 +52,7 @@ class DomainRB(Scheduler):
 
     def bottleneck_allows_execution(self, task_id, eligble_to_run):
 
-        for resource  in self.resource_pool.values():
+        for resource  in list(self.resource_pool.values()):
             if self.tasks_to_do[task_id] in resource.required_by:
                 for competitor in eligble_to_run:
                     if competitor.id != task_id:

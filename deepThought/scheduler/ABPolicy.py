@@ -12,13 +12,13 @@ class ABPolicy(Scheduler):
         if order_list is not None:
             self.order_list = order_list
         else:
-            self.order_list = [job.id in self.job.to_run.values()]
+            self.order_list = [job.id in list(self.job.to_run.values())]
 
     def _reschedule(self):
         new_tasks = []
 
         for task_id in self.order_list:
-            if task_id in self.tasks_to_do.keys():
+            if task_id in list(self.tasks_to_do.keys()):
                new_task = self.allocate_resources(self.tasks_to_do[task_id])
                if new_task is not None:
                     new_tasks.append(new_task)
@@ -26,6 +26,6 @@ class ABPolicy(Scheduler):
                else:
                    break
 
-        if len(new_tasks) == 0 and len(self.currently_assigned_resoruces) == 0 and len(self.tasks_to_do) is not 0:
+        if len(new_tasks) == 0 and len(self.currently_assigned_resoruces) == 0 and len(self.tasks_to_do) != 0:
             raise UnfeasibleScheduleException()
         return new_tasks

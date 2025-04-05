@@ -5,6 +5,7 @@ import argparse
 import sys
 import copy
 import deepThought.ORM.ORM as ORM
+import pickle
 
 from deepThought.scheduler.referenceScheduler import ReferenceScheduler
 from deepThought.scheduler.optimizedDependencyScheduler import OptimizedDependencyScheduler
@@ -77,7 +78,7 @@ def main():
         scheduler.initialize()
         job.already_initialized = True
         Logger.info("Writing to file")
-        ORM.cPickle.dump(job, open(args.file, "wb"))
+        pickle.dump(job, open(args.file, "wb"))
         sys.exit(0)
 
     start_time = datetime.datetime.now()
@@ -85,6 +86,10 @@ def main():
         job.initialize()
         scheduler.initialize()
         Logger.debug("initializing job")
+    else:
+        # Make sure the scheduler is initialized even if the job is already initialized
+        if hasattr(scheduler, 'initialize'):
+            scheduler.initialize()
 
 
 
@@ -98,35 +103,104 @@ def main():
         list_min = [datapoint['min'] for datapoint in log_list]
         list_max = [datapoint['max'] for datapoint in log_list]
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=(12, 10))
         ax = fig.add_subplot(2, 1, 1)
-        p1 = ax.plot(range(len(list_min)),list_min)
-        p2 = ax.plot(range(len(list_max)),list_max)
+        p1 = ax.plot(list(range(len(list_min))),list_min, 'b-', marker='o')
+        p2 = ax.plot(list(range(len(list_max))),list_max, 'r-', marker='x')
 
-        ax.set_xlabel("List GA Generation")
-        ax.set_ylabel("fitness (execution time)")
-        plt.legend( (p1[0], p2[0]), ('min', 'max'))
+        ax.set_xlabel("ListGA Generation", fontsize=12)
+        ax.set_ylabel("Fitness (execution time)", fontsize=12)
+        plt.legend((p1[0], p2[0]), ('Best Fitness', 'Worst Fitness'))
+        
+        # Add improvement calculations and annotations
+        if len(list_min) > 1:
+            total_improvement = (list_min[0] - list_min[-1]) / list_min[0] * 100
+            ax.annotate(f'Total improvement: {total_improvement:.1f}%', 
+                        xy=(len(list_min)-1, list_min[-1]),
+                        xytext=(len(list_min)-1, list_min[-1]*1.2),
+                        arrowprops=dict(facecolor='green', shrink=0.05))
+        
+        # Add explanation text
+        explanation = """
+        ListGA Evolution: Shows how task sequence improves over generations.
+        • Lower values = Better schedules (shorter execution time)
+        • Blue line = Best solution in population
+        • Red line = Worst solution in population
+        • Downward trend shows genetic algorithm improvement
+        """
+        props = dict(boxstyle='round', facecolor='lightblue', alpha=0.5)
+        ax.text(0.5, 0.05, explanation, transform=ax.transAxes, fontsize=9,
+               bbox=props, horizontalalignment='center')
+
         ax = fig.add_subplot(2, 1, 2)
 
         log_arc = scheduler.getArcGALog()
-        list_min =  [datapoint['min'] for datapoint in log_arc]
+        list_min = [datapoint['min'] for datapoint in log_arc]
         list_max = [datapoint['max'] for datapoint in log_arc]
 
         for entry in list_max:
             if type(entry) == tuple:
                 list_max.remove(entry)
-        p1 = ax.plot(range(len(list_min)),list_min)
-        p2 = ax.plot(range(len(list_max)),list_max)
+        p1 = ax.plot(list(range(len(list_min))),list_min, 'b-', marker='o')
+        p2 = ax.plot(list(range(len(list_max))),list_max, 'r-', marker='x')
 
-        ax.set_xlabel("Arc GA Generation")
-        ax.set_ylabel("fitness")
-        plt.legend( (p1[0], p2[0]), ('min', 'max'))
+        ax.set_xlabel("ArcGA Generation", fontsize=12)
+        ax.set_ylabel("Fitness", fontsize=12)
+        plt.legend((p1[0], p2[0]), ('Best Fitness', 'Worst Fitness'))
+        
+        # Add ArcGA explanation text
+        arc_explanation = """
+        ArcGA Evolution: Shows how resource allocation improves over generations.
+        • Lower values = Better resource assignments
+        • ArcGA applies additional ordering constraints between tasks
+        • Genetic algorithm explores solution space to find optimal configuration
+        """
+        props = dict(boxstyle='round', facecolor='lightblue', alpha=0.5)
+        ax.text(0.5, 0.05, arc_explanation, transform=ax.transAxes, fontsize=9,
+               bbox=props, horizontalalignment='center')
+        
+        # Add title explaining genetic algorithm
+        fig.suptitle('Genetic Algorithm Evolution Progress\n' + 
+                    'Shows how the genetic algorithm improves schedules over generations', 
+                    fontsize=16)
 
-        plt.show()
+        plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust for overall title
+        
+        if args.output is not None:
+            # Save the GA evolution chart
+            ga_chart_output = args.output.replace('.pickle', '_ga_evolution.pdf')
+            plt.savefig(ga_chart_output, dpi=300)
+            Logger.info(f"Genetic algorithm evolution chart saved to {ga_chart_output}")
+        else:
+            plt.show()
 
     if args.output is not None:
         try:
             save_simulation_result(result, args.output)
+            Logger.info(f"Simulation result saved to file: {args.output}")
+            
+            # Add summary of scheduling results to console output
+            print("\n" + "="*60)
+            print("GENETIC ALGORITHM SCHEDULING RESULTS")
+            print("="*60)
+            print(f"\nTotal project duration: {result.total_time:.2f} time units")
+            print(f"Total tasks executed: {len(result.execution_history)}")
+            
+            if hasattr(scheduler, 'getListGALog') and scheduler.getListGALog():
+                log = scheduler.getListGALog()
+                if log and len(log) > 1:
+                    initial_fitness = log[0]['min']
+                    final_fitness = log[-1]['min']
+                    improvement = (initial_fitness - final_fitness) / initial_fitness * 100
+                    print(f"\nGenetic Algorithm Improvement:")
+                    print(f"  Initial best fitness: {initial_fitness:.2f}")
+                    print(f"  Final best fitness: {final_fitness:.2f}")
+                    print(f"  Improvement: {improvement:.2f}%")
+            
+            print("\nTo visualize the schedule with detailed metrics, run:")
+            print(f"  python visualizer.py --pdf output_gantt.pdf --detailed {args.output}")
+            print("="*60)
+            
         except IOError:
             "The outputfile cannot be opened for writing."
 

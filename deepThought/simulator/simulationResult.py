@@ -1,7 +1,7 @@
 __author__ = 'jules'
 
 from deepThought.util import Logger
-import cPickle
+import pickle
 
 
 class SimulationResult(object):
@@ -19,9 +19,9 @@ class SimulationResult(object):
 
 def save_simulation_result(result, output_file):
     Logger.info("writing simulation result to file: %s" % output_file)
-    cPickle.dump(result, open(output_file, "wb"))
+    pickle.dump(result, open(output_file, "wb"))
 
 
 def load_simulation_result(file_path):
     Logger.info("loading simulation result from file: %s " % file_path )
-    return cPickle.load(open(file_path, "rb"))
+    return pickle.load(open(file_path, "rb"))

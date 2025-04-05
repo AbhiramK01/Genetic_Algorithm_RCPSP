@@ -4,7 +4,7 @@ import numpy as np
 
 from scipy.stats import uniform
 
-from customDistributions import Hyperexp2_gen, Erlangk_gen, Gamma, BranchingErlang, TruncatedErlangk_gen, MixtureNormUni, TruncatedHyperexp2
+from .customDistributions import Hyperexp2_gen, Erlangk_gen, Gamma, BranchingErlang, TruncatedErlangk_gen, MixtureNormUni, TruncatedHyperexp2
 
 import math
 

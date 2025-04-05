@@ -13,7 +13,7 @@ class RBPolicy(Scheduler):
         if order_list is not None:
             self.order_list = copy.deepcopy(order_list) #maybe this can be done better
         else:
-            self.order_list = copy.copy([job.id in self.job.to_run.values()])
+            self.order_list = copy.copy([job.id in list(self.job.to_run.values())])
 
     def _reschedule(self):
         new_tasks = []

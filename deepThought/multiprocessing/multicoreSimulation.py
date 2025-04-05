@@ -58,14 +58,14 @@ def process_job_parallel(scheduler, job, nr_cores, nr_iter, parameters = None):
 
     #reduce
     results = []
-    for value in return_values.values():
+    for value in list(return_values.values()):
         for entry in value:
             results.append(entry)
 
     min = None
     max = None
 
-    for extreme in extremes.values():
+    for extreme in list(extremes.values()):
         if min is None or extreme[0].total_time < min.total_time:
             min = extreme[0]
         if max is None or extreme[1].total_time > max.total_time:
@@ -88,7 +88,7 @@ def worker(id, nr_cores, scheduler, job, n, return_values, extremes, parameters=
     min = None
     max = None
     if job.already_initialized == True:
-        for task in job.tasks.values():
+        for task in list(job.tasks.values()):
             size = len(task.pre_computed_execution_times) / nr_cores
             task.pre_computed_execution_times = task.pre_computed_execution_times[id*size:(id +1)*size]
     Scheduler = schedulerForName(scheduler) #gives us the correct class to use

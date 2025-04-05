@@ -15,12 +15,12 @@ def main():
     g = gt.Graph(directed=False)
     vertices = {}
 
-    for test in data.tests.values():
+    for test in list(data.tests.values()):
         vertices[test.id] = g.add_vertex()
 
-    for equipment in data.test_equipment.values():
+    for equipment in list(data.test_equipment.values()):
         all_items = []
-        for test in data.tests.values():
+        for test in list(data.tests.values()):
             if equipment in test.testEquipment:
                 all_items.append(test)
         if len(all_items) > 0:

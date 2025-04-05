@@ -5,14 +5,12 @@ from deepThought.util import Logger
 __author__ = 'jules'
 
 
-class Scheduler(object):
-    __metaclass__ = abc.ABCMeta
-
+class Scheduler(object, metaclass=abc.ABCMeta):
     def __init__(self, job):
         self.job = job
         self.resource_pool = job.resources
         self.tasks_to_do = {}
-        list_of_tasks = sorted(job.tasks.values(), key=lambda x: x.priority, reverse=True) # sort tasks by priority
+        list_of_tasks = sorted(list(job.tasks.values()), key=lambda x: x.priority, reverse=True) # sort tasks by priority
         for task in list_of_tasks:
             self.tasks_to_do[task.id] = task
         self.task_buffer = []
@@ -49,10 +47,10 @@ class Scheduler(object):
         return len(self.tasks_to_do) > 0
 
     def initialize(self):
-        for task in self.tasks_to_do.values():
+        for task in list(self.tasks_to_do.values()):
             for requirement in task.required_resources:
                 if not isinstance(requirement, ORM.Resource): # not a specific resource, but a generic one
-                    for resource in self.resource_pool.values():
+                    for resource in list(self.resource_pool.values()):
                         if _resources_matches_requirement_slow(requirement, resource):
                             requirement.fulfilled_by.append(resource.id)
                 else:
@@ -60,7 +58,7 @@ class Scheduler(object):
 
     def get_tasks_eligible_to_run(self):
         eligible_to_run = []
-        for task in self.tasks_to_do.values():
+        for task in list(self.tasks_to_do.values()):
             if self._is_eligible_to_run(task):
                 eligible_to_run.append(task)
         return eligible_to_run

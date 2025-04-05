@@ -13,7 +13,7 @@ class MfssAB(Scheduler):
         if order_list is not None:
             self.order_list = order_list
         else:
-            self.order_list = [job.id in self.job.to_run.values()]
+            self.order_list = [job.id in list(self.job.to_run.values())]
         self.mfss = mfss
         self.ignore_infeasible_schedules = ignore_infeasible_schedules
 
@@ -21,7 +21,7 @@ class MfssAB(Scheduler):
         new_tasks = []
 
         for task_id in self.order_list:
-            if self.mfss_allows_execution(task_id) and task_id in self.tasks_to_do.keys():
+            if self.mfss_allows_execution(task_id) and task_id in list(self.tasks_to_do.keys()):
                new_task = self.allocate_resources(self.tasks_to_do[task_id])
                if new_task is not None:
                     new_tasks.append(new_task)
@@ -29,12 +29,12 @@ class MfssAB(Scheduler):
                else:
                    break
 
-        if len(new_tasks) == 0 and len(self.currently_assigned_resoruces) == 0 and len(self.tasks_to_do) is not 0:
+        if len(new_tasks) == 0 and len(self.currently_assigned_resoruces) == 0 and len(self.tasks_to_do) != 0:
             if self.ignore_infeasible_schedules == False:
                 raise UnfeasibleScheduleException()
             else:
                 Logger.warning("unfeasible schedule encountered. Ignoring mfss")
-                for task_id in self.tasks_to_do.keys():
+                for task_id in list(self.tasks_to_do.keys()):
                     new_task = self.allocate_resources(self.tasks_to_do[task_id])
                     if new_task is not None:
                         new_tasks.append(new_task)
@@ -45,6 +45,6 @@ class MfssAB(Scheduler):
 
     def mfss_allows_execution(self, task_id):
         for set in self.mfss:
-            if task_id == set[1] and set[0] in self.tasks_to_do.keys():
+            if task_id == set[1] and set[0] in list(self.tasks_to_do.keys()):
                 return False
         return True

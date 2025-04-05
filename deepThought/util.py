@@ -29,17 +29,17 @@ class Logger(object):
     @staticmethod
     def log(log_type, message):
         if log_type == "warning":
-            print(PrintColors.WARNING),
-            print("WARNING: "),
+            print((PrintColors.WARNING), end=' ')
+            print(("WARNING: "), end=' ')
         elif log_type == "error":
-            print(PrintColors.FAIL),
-            print("ERROR: "),
+            print((PrintColors.FAIL), end=' ')
+            print(("ERROR: "), end=' ')
         elif log_type == "info":
-            print("INFO: "),
+            print(("INFO: "), end=' ')
         elif log_type == "debug":
             print("DEBUG: ")
-        print(message),
-        print(PrintColors.ENDC)
+        print((message), end=' ')
+        print((PrintColors.ENDC))
 
 
 class PrintColors:

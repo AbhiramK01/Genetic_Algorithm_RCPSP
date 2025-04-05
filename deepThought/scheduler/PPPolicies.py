@@ -16,15 +16,15 @@ class PPPolicies(Scheduler):
         if parameters is not None:
             self.param = parameters
         else:
-            self.param = {"listGAGen": 2,
-                          "listGACXp" : 1.0,
-                          "listGAMUTp": 0.5,
-                          "listNoList" : 10,
-                          "arcGAGen" : 100,
+            self.param = {"listGAGen": 5,
+                          "listGACXp" : 0.8,
+                          "listGAMUTp": 0.3,
+                          "listNoList" : 5,
+                          "arcGAGen" : 10,
                           "arcGACXp" : 0.5,
                           "arcGAMUTp" : 0.1,
-                          "arcGAn_pairs" : 7,
-                          "arcGAno_p" : 10}
+                          "arcGAn_pairs" : 5,
+                          "arcGAno_p" : 5}
 
 
     def _reschedule(self):

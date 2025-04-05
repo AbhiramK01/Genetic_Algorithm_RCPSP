@@ -1,5 +1,5 @@
 import math
-import cPickle
+import pickle
 from deepThought.util import Logger, TypeConversion, list_to_cdf
 import deepThought.stats.phase_type as  ptdist
 import numpy as np
@@ -14,10 +14,10 @@ class DistributionType(Enum):
 
 def deserialize(file_path):
     Logger.info("loading data from file: %s" % file_path)
-    job = cPickle.load(open(file_path, "rb"))
-    Logger.info("loaded %s tasks" % (len(job.tasks.values())))
-    Logger.info("loaded %s resources" % (len(job.resources.values())))
-    Logger.info("loaded %s capabilities"  % (len(job.capabilities.values())))
+    job = pickle.load(open(file_path, "rb"))
+    Logger.info("loaded %s tasks" % (len(list(job.tasks.values()))))
+    Logger.info("loaded %s resources" % (len(list(job.resources.values()))))
+    Logger.info("loaded %s capabilities"  % (len(list(job.capabilities.values()))))
 
     return job
 
@@ -32,7 +32,7 @@ class Job(object):
         self.already_initialized = False
 
     def initialize(self):
-        for task in self.tasks.itervalues():
+        for task in self.tasks.values():
             task.initialize()
 
 

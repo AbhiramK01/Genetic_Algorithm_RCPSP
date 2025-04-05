@@ -17,6 +17,7 @@ class ListGA():
     def __init__(self, job, list_of_initial_pop):
         import deepThought.simulator.simulator as sim
         self.job = job # this is required for the simulator which is needed to compute the fitness of an individual
+        self.task_count = len(job.tasks.keys())  # Get actual task count instead of hardcoded value
         self.no_list = len(list_of_initial_pop)
         self.list_of_initial_pop = list_of_initial_pop
         self.inital_pop_constructed = 0 # counts how many inital pop have been constructed already. assert this < len(list_of_initial_pop)
@@ -115,35 +116,37 @@ def select(pop, n):
     return selection
 
 def crossover(child1, child2):
+    """Simple crossover that works with any task count"""
     n = len(child1)
-    r1 = random.randint(1,n)
-    r2 = random.randint(r1, n)
+    r1 = random.randint(1, n-1)
+    r2 = random.randint(r1, n-1)
 
-    father = copy.copy(child1)
-    mother = copy.copy(child2)
+    # Make copies to work with
+    father = child1.copy()
+    mother = child2.copy()
 
+    # Clear children
     del child1[:]
-    child1.extend(father[0 : r1])
-    for task in mother[r1 : r2]:
-        if task not in child1:
-            child1.append(task)
-
-
-    for task in father[r1 : n]:
-        if task not in child1:
-            child1.append(task)
-
     del child2[:]
-    child2.extend(mother[0 : r1])
 
-    for task in father[r1 : r2]:
+    # Create first child - take first portion from father, middle from mother, rest from father
+    child1.extend(father[0:r1])
+    for task in mother[r1:r2]:
+        if task not in child1:
+            child1.append(task)
+    for task in father[r1:]:
+        if task not in child1:
+            child1.append(task)
+
+    # Create second child - take first portion from mother, middle from father, rest from mother
+    child2.extend(mother[0:r1])
+    for task in father[r1:r2]:
+        if task not in child2:
+            child2.append(task)
+    for task in mother[r1:]:
         if task not in child2:
             child2.append(task)
 
-
-    for task in mother[r1 : n]:
-        if task not in child2:
-            child2.append(task)
-
-    assert len(child1) == 44
-    assert len(child2) == 44
+    # Verify lengths
+    assert len(child1) == n
+    assert len(child2) == n

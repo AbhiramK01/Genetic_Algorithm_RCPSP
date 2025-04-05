@@ -1,8 +1,7 @@
 __author__ = 'jules'
 from  scipy.stats import rv_continuous
 import numpy as np
-from scipy.misc import factorial
-from scipy.special import gammainc, gamma, erf
+from scipy.special import factorial, gammainc, gamma, erf
 from scipy.linalg import expm
 class Hyperexp2_gen(rv_continuous):
     def __init__(self,name,  lambda1, lambda2, p):

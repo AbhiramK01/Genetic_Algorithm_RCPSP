@@ -32,12 +32,12 @@ class ArcGA():
 
         def create_inital_arc_list():
             tmp_list = []
-            for resource in job.resources.values():
+            for resource in list(job.resources.values()):
                 if len(resource.required_by) > 1:
                     for tuple in range(1, random.randrange(1, self.n_pairs)):
                         tuple = (random.choice(resource.required_by).id, random.choice(resource.required_by).id)
-                        assert(tuple[0] in self.job.tasks.keys())
-                        assert(tuple[1] in self.job.tasks.keys())
+                        assert(tuple[0] in list(self.job.tasks.keys()))
+                        assert(tuple[1] in list(self.job.tasks.keys()))
                         if tuple[0] == tuple[1]:
                             continue
                         tmp_list.append(tuple)
@@ -120,19 +120,22 @@ class ArcGA():
         return best
 
     def select(self, pop, n):
-        #selection = sorted(pop, key=lambda ind: ind.fitness.values[0] - 100 * ind.fitness.values[1] if ind.fitness.valid else None, reverse=True)[:n]
-        selection = sorted(pop, key=lambda ind: ind.fitness.values[0] if ind.fitness.valid else None, reverse=True)[:n]
-        # for entry in selection:
-        #     if entry.fitness.valid:
-        #         print entry.fitness.values
-        #     else:
-        #         print("invalid")
+        """Select the n best individuals from the population."""
+        # Handle fitness values that might be None
+        def fitness_key(ind):
+            if ind.fitness.valid and ind.fitness.values[0] is not None:
+                return ind.fitness.values[0]
+            else:
+                # Assign a high (bad) fitness value if None
+                return float('inf')
+                
+        selection = sorted(pop, key=fitness_key, reverse=False)[:n]
         return selection
 
     def create_new_individual_from_complement(self, individual):
 
         while True:
-            new_candidate = (random.choice(self.job.tasks.keys()), random.choice(self.job.tasks.keys()))
+            new_candidate = (random.choice(list(self.job.tasks.keys())), random.choice(list(self.job.tasks.keys())))
             for tuple in individual:
                 if new_candidate[0] == tuple[0] and new_candidate[1] == tuple[1] or new_candidate[0] == new_candidate[1]:
                     break
@@ -180,7 +183,7 @@ class ArcGA():
     def mutate(self, to_mutate, pbx):
 
         if random.random() < 0.5:
-            if len(to_mutate) is not 0:
+            if len(to_mutate) != 0:
                 to_mutate.remove(random.choice(to_mutate))
         else:
             to_mutate.append(self.create_new_individual_from_complement(to_mutate))
